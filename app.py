@@ -42,7 +42,7 @@ def submit_order():
     return redirect('/billing.html')
 
 # Route 2: Your Live Admin Dashboard Panel
-@app.route('/dashboard')
+@app.route('/annapurna')
 def dashboard():
     conn = sqlite3.connect('orders.db')
     cursor = conn.cursor()
