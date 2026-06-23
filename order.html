@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milk Allocation Request — Gauras Dairy</title>
+    <style>
+        :root {
+            --bg-cream: #FDFBF7;        /* Perfect matching milky cream background */
+            --card-milk: #FFFFFF;       /* Pure white form fields */
+            --text-main: #1D1D1F;       /* Premium charcoal accents */
+            --text-muted: #6E6E73;
+            --border-milk: #F2EFE9;
+            --accent-gold: #C5A880;     /* Organic gold highlight line */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            
+            /* Smooth fade-in arrival effect */
+            opacity: 0;
+            animation: fadeInPage 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes fadeInPage {
+            to { opacity: 1; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            background-color: var(--card-milk);
+            border: 1px solid var(--border-milk);
+            border-radius: 14px;
+            padding: 16px;
+            color: var(--text-main);
+            font-size: 16px;
+            outline: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.01);
+            transition: border-color 0.2s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent-gold);
+        }
+
+        .row {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn {
+            width: 100%;
+            background-color: var(--text-main);
+            color: var(--bg-cream);
+            border: none;
+            border-radius: 16px;
+            padding: 18px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            transition: transform 0.1s ease, opacity 0.2s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <section style="margin-top:20px;">
+        <h2 class="section-title">Direct Milk Allocation Request</h2>
+
+        <form id="deliveryForm" action="/submit-order" method="POST" onsubmit="interceptSubmission(event)">
+            
+            <input type="hidden" name="_subject" value="New Gauras Dairy Milk Request!">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="Farms Origin" value="Ward 2, Behind Ganesh Ji Mandir, Nainwa">
+            <input type="hidden" name="Rate Applied" id="hiddenPriceRate" value="₹60 per Liter">
+
+            <div class="form-group">
+                <label>Dairy Selection</label>
+                <select name="Milk Breed Variety" id="milkType" onchange="updateDynamicPrice()" required>
+                    <option value="Sahiwal Cross Cow" data-price="60">Sahiwal Cross Cow Milk (₹60/Ltr)</option>
+                    <option value="Premium Murrah Buffalo" data-price="70">Premium Murrah Buffalo Milk (₹70/Ltr)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Preferred Delivery Time</label>
+                <select name="Delivery Schedule Preference" id="deliveryTime" required>
+                    <option value="Morning Only">Morning Only</option>
+                    <option value="Evening Only">Evening Only</option>
+                    <option value="Both (Morning & Evening)">Both (Morning & Evening)</option>
+                </select>
+            </div>
+
+            <div class="row">
+                <div class="form-group" style="flex: 1;">
+                    <label>Volume (Ltrs/Day)</label>
+                    <input type="number" name="Volume Per Day" id="quantity" min="1" max="10" value="1" required>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Duration (Days)</label>
+                    <input type="number" name="Subscription Length" id="duration" min="1" max="90" value="30" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="Customer Name" id="custName" placeholder="Your Name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Delivery Street Address (Nainwa Only)</label>
+                <textarea name="Delivery Destination" id="address" rows="2" placeholder="House No., Ward, Landmark Details" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Contact Number (For Call Verification)</label>
+                <input type="tel" name="Customer Phone" id="phone" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
+            </div>
+
+            <button type="submit" class="btn" id="submitFormBtn">Submit Allocation Request</button>
+        </form>
+    </section>
+</div>
+
+<script>
+    function updateDynamicPrice() {
+        const selectEl = document.getElementById('milkType');
+        const selectedOption = selectEl.options[selectEl.selectedIndex];
+        const currentPrice = selectedOption.getAttribute('data-price');
+        document.getElementById('hiddenPriceRate').value = `₹${currentPrice} per Liter`;
+    }
+
+   function interceptSubmission(event) {
+    event.preventDefault(); 
+    const form = document.getElementById('deliveryForm');
+    
+    fetch(form.action, {
+        method: "POST",
+        body: new FormData(form)
+    }).then(response => {
+        if (response.ok) {
+            window.location.href = 'billing.html';
+        } else {
+            alert("Backend database transmission error.");
+        }
+    }).catch(error => {
+        alert("Connection to local backend server failed.");
+    });
+}
+</script>
+</body>
+</html>

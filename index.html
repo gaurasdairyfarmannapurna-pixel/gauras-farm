@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gauras Dairy Farm — Pure Local Produce</title>
+    <style>
+        :root {
+            --bg-cream: #FDFBF7;        /* Smooth milky cream background */
+            --card-milk: #FFFFFF;       /* Pure milk white for cards */
+            --text-main: #1D1D1F;       /* Premium charcoal text */
+            --text-muted: #6E6E73;      /* Muted elegant gray */
+            --border-milk: #F2EFE9;     /* Soft dividing lines */
+            --accent-gold: #C5A880;     /* Organic warm gold accent */
+            --whatsapp-green: #25D366;  /* Official WhatsApp theme */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            /* Global Smooth Page Transition Setup */
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* Class applied via JS to smoothly fade out the page before switching */
+        body.fade-out {
+            opacity: 0;
+        }
+
+        .scroll-container {
+            width: 100%;
+            max-width: 480px;
+            padding: 24px 20px 120px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 64px;
+        }
+
+        /* --- MOBILE SCROLL & POP ANIMATIONS --- */
+        .reveal-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
+                        transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .reveal-section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .media-frame {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            background: linear-gradient(135deg, #F9F6F0 0%, #EFEBE4 100%);
+            border: 1px solid var(--border-milk);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 18px 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.02);
+            transform: scale(0.92);
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .reveal-section.active .media-frame {
+            transform: scale(1);
+        }
+
+        .media-frame:active, .milky-card:active {
+            transform: scale(0.97) !important;
+            transition: transform 0.2s ease;
+        }
+
+        .media-frame::before { content: '📸 '; font-size: 24px; margin-bottom: 6px; }
+        .media-frame span { font-size: 11px; font-weight: 600; color: var(--accent-gold); letter-spacing: 0.5px; text-transform: uppercase; }
+        .media-frame .user-hint { font-size: 10px; color: var(--text-muted); font-weight: 400; margin-top: 4px; text-transform: none; }
+
+        /* --- TYPOGRAPHY --- */
+        .badge {
+            display: inline-block;
+            background: var(--card-milk);
+            border: 1px solid var(--border-milk);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 16px;
+            color: var(--accent-gold);
+        }
+
+        h1 { font-size: 42px; font-weight: 700; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 12px; }
+        h2.section-header { font-size: 26px; font-weight: 700; letter-spacing: -0.8px; margin-bottom: 12px; }
+        .text-block { font-size: 15px; line-height: 1.6; color: var(--text-main); }
+        .text-block p { margin-bottom: 12px; }
+        .user-editable-space { background: rgba(255, 255, 255, 0.6); border: 1px dashed var(--accent-gold); padding: 14px; border-radius: 12px; font-size: 13px; color: var(--text-muted); margin-top: 14px; font-style: italic; }
+
+        /* --- CARDS & MATRICES --- */
+        .info-grid { display: flex; gap: 12px; margin: 16px 0; }
+        .milky-card { flex: 1; background: var(--card-milk); border: 1px solid var(--border-milk); border-radius: 18px; padding: 20px; box-shadow: 0 6px 16px rgba(0,0,0,0.01); transition: transform 0.3s ease; }
+        .milky-card h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 6px; }
+        .milky-card p { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+
+        /* --- FIXED NAVIGATION BASEBAR --- */
+        .bottom-nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background: rgba(253, 251, 247, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-milk);
+            padding: 16px 20px 24px 20px;
+            display: flex;
+            gap: 12px;
+            z-index: 999;
+        }
+
+        .btn-primary {
+            flex: 1;
+            background-color: var(--text-main);
+            color: var(--bg-cream);
+            border: none;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            cursor: pointer;
+        }
+
+        /* Click Registry / Feedback Color Change state */
+        .btn-primary.clicked {
+            background-color: var(--accent-gold) !important;
+            color: #FFFFFF !important;
+            transform: scale(0.96);
+        }
+
+        .btn-whatsapp {
+            width: 54px;
+            height: 54px;
+            background-color: var(--whatsapp-green);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 6px 16px rgba(37, 211, 102, 0.25);
+        }
+        .btn-whatsapp svg { width: 26px; height: 26px; fill: #FFFFFF; }
+    </style>
+</head>
+<body>
+
+<div class="scroll-container">
+    <!-- BLOCK 1: BRAND INTRODUCTION HERO -->
+    <header class="reveal-section" style="margin-top: 20px;">
+        <span class="badge">Nainwan Operational Unit</span>
+        <!-- Kept on one single line smoothly -->
+        <h1 style="white-space: nowrap; font-size: 36px;">Gauras Dairy Farm</h1>
+        
+        <div class="media-frame">
+            <!-- Modern organic dairy cover photo -->
+            <img src="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?auto=format&fit=crop&w=800&q=80" alt="Gauras Dairy Farm" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+
+        <div class="text-block">
+            <p>We deliver raw, pure milk straight from our farm setup to your doorstep. Safe, untouched logistics handling morning and evening allocations cleanly across Nainwa.</p>
+        </div>
+    </header>
+
+  <!-- BLOCK 2: SAHIWAL CROSSBREED DATA -->
+    <section class="reveal-section">
+        <span class="badge">Desi Breed Profiles</span>
+        <h2 class="section-header">Sahiwal Crossbreed Milk</h2>
+        
+        <div class="media-frame">
+            <!-- Premium Indian Cattle Visual -->
+            <img src="https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?auto=format&fit=crop&w=800&q=80" alt="Sahiwal Cross" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+
+        <div class="text-block">
+            <p>Our Sahiwal crossbreed selection is celebrated for its premium quality (A2 type) properties. Combining native structural traits with superior adaptation profiles, this milk delivers a sweet natural undertone, clean texture, and rich daily nutritional value.</p>
+            <div class="user-editable-space">✍️ Add your specific text detailing your Sahiwal herd management here...</div>
+        </div>
+    </section>
+
+   <!-- BLOCK 3: PREMIUM BUFFALO SYSTEM -->
+    <section class="reveal-section">
+        <span class="badge">Rich Cream Segment</span>
+        <h2 class="section-header">Premium Murrah Buffalo</h2>
+        <div class="media-frame">
+            <img src="https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=800&q=80" alt="Murrah Buffalo Selection" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+        <div class="text-block">
+            <p>Our Murrah buffalo line is selected specifically for consumers looking for thick, heavy-bodied milk. Murrah is universally acknowledged as the pinnacle of buffalo breeds, generating exceptional fat content ideal for pure ghee.</p>
+        </div>
+    </section>
+
+    <!-- BLOCK 4: MACHINERY -->
+    <section class="reveal-section">
+        <span class="badge">Zero Human Touch</span>
+        <h2 class="section-header">Modern Milking Machinery</h2>
+        <div class="media-frame">
+            <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad451?auto=format&fit=crop&w=800&q=80" alt="Automated Milking Systems" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+        <div class="text-block">
+            <p>Hygiene is non-negotiable. We employ specialized automated milking machines that seamlessly extract milk under strict sanitary parameters.</p>
+        </div>
+    </section>
+
+    <!-- BLOCK 5: QUALITY & FAT ASSURANCE -->
+    <section class="reveal-section">
+        <span class="badge">Purity Testing</span>
+        <h2 class="section-header">Natural Fat Percentages</h2>
+        <div class="media-frame">
+            <img src="https://images.unsplash.com/photo-1532187863486-abf9d39d6618?auto=format&fit=crop&w=800&q=80" alt="Milk Quality Labs" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+        <div class="text-block">
+            <p>Our milk composition retains its organic proportions straight from the collection source. We do not skim, skim-blend, or standardize fat artificially.</p>
+        </div>
+    </section>
+
+    <!-- NEW BLOCK: EXPERT VETERINARY SERVICES -->
+    <section class="reveal-section">
+        <span class="badge">On-Farm Healthcare</span>
+        <h2 class="section-header">Professional Animal Care</h2>
+        
+        <div class="media-frame">
+            <!-- Veterinary/Livestock health image representation -->
+            <img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=800&q=80" alt="Veterinary Care" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+
+        <div class="text-block">
+            <p>We care about the health of our community's livestock just as much as our own. Because our operations are partnered directly with a professional veterinarian, we provide dedicated healthcare support for your animals too.</p>
+            <p style="font-weight: 600; color: var(--accent-gold);">Have an unhealthy cow, buffalo, or farm animal? Reach out directly via our WhatsApp line below to request medical assistance or expert guidance immediately.</p>
+        </div>
+    </section>
+
+    <!-- BLOCK 6: PRICING MATRIX -->
+    <section class="reveal-section">
+        <span class="badge">No Middlemen Markup</span>
+        <h2 class="section-header">Reasonable Pricing Structure</h2>
+        <div class="info-grid">
+            <div class="milky-card"><h4>Sahiwal Milk</h4><p>₹60<span style="font-size:12px; font-weight:400; color:var(--text-muted);">/Ltr</span></p></div>
+            <div class="milky-card"><h4>Murrah Milk</h4><p>₹70<span style="font-size:12px; font-weight:400; color:var(--text-muted);">/Ltr</span></p></div>
+        </div>
+    </section>
+
+    <!-- BLOCK 7: TIMINGS -->
+    <section class="reveal-section">
+        <span class="badge">Nainwan Fleet Schedule</span>
+        <h2 class="section-header">Delivery & Farm Timings</h2>
+        <div class="text-block">
+            <p>To match your breakfast and evening cooking schedules seamlessly, our delivery vehicles complete regional routes on strict schedules twice a day.</p>
+        </div>
+    </section>
+</div>
+
+<!-- STICKY BOTTOM CONTROL FOOTBAR -->
+<nav class="bottom-nav-bar">
+    <a href="https://wa.me/917073526682" target="_blank" class="btn-whatsapp" aria-label="Message on WhatsApp">
+        <svg viewBox="0 0 24 24"><path d="M12.012 2c-5.508 0-9.985 4.478-9.985 9.984 0 1.757.455 3.407 1.253 4.852l-1.331 4.865 4.984-1.307c1.402.766 2.998 1.205 4.69 1.205 5.508 0 9.985-4.479 9.985-9.985 0-5.507-4.477-9.984-9.985-9.984zm6.055 14.122c-.248.699-1.241 1.341-1.71 1.4-.469.059-.938.293-2.994-.52-2.627-1.04-4.275-3.763-4.406-3.937-.131-.174-1.066-1.417-1.066-2.704 0-1.287.674-1.92.915-2.181.242-.261.53-.326.707-.326.178 0 .356.002.509.009.157.007.369-.06.577.447.213.518.73 1.779.794 1.909.064.13.107.282.021.456-.085.174-.128.282-.255.434-.127.152-.267.34-.381.456-.128.129-.262.27-.113.527.149.256.662 1.092 1.418 1.766.974.87 1.794 1.14 2.05 1.27.256.129.405.108.555-.065.15-.174.64-.746.811-1.001.171-.255.342-.212.576-.125.234.086 1.488.702 1.744.832.256.129.426.195.489.303.064.109.064.63-.184 1.329z"/></svg>
+    </a>
+    
+    <a href="order.html" class="btn-primary" id="allocationBtn" onclick="smoothPageTransition(event)">Book Milk Allocation</a>
+</nav>
+
+<script>
+    // 1. Scroll-reveal tracking
+    const sections = document.querySelectorAll('.reveal-section');
+    const revealOnScroll = () => {
+        const triggerBottom = (window.innerHeight / 5) * 4.2;
+        sections.forEach(section => {
+            if (section.getBoundingClientRect().top < triggerBottom) {
+                section.classList.add('active');
+            }
+        });
+    };
+    window.addEventListener('DOMContentLoaded', revealOnScroll);
+    window.addEventListener('scroll', revealOnScroll);
+
+    // 2. Click Registry and Smooth Intercept Animation Execution
+    function smoothPageTransition(event) {
+        event.preventDefault(); // Stop standard abrupt browser page snap
+        
+        const btn = document.getElementById('allocationBtn');
+        const targetUrl = btn.getAttribute('href');
+        
+        // Instant Click Registry Visual Feedback State
+        btn.classList.add('clicked');
+        btn.innerText = "Opening Request Form...";
+        
+        // Smooth out the parent frame after feedback is registered
+        setTimeout(() => {
+            document.body.classList.add('fade-out');
+            
+            // Route page targets cleanly right as transition finishes
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 500); // Matches the CSS transition duration
+        }, 150); // Small pause to allow click registry feedback to register visually
+    }
+</script>
+</body>
+</html>

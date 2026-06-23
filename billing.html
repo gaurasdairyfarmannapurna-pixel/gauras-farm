@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gauras Dashboard — Secure Billing</title>
+    <style>
+        :root {
+            --bg: #000000;
+            --surface: #121212;
+            --accent: #ffffff;
+            --text-muted: #86868b;
+            --border: #2c2c2e;
+            --success: #30d158;
+        }
+        body {
+            background-color: var(--bg);
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .container {
+            width: 100%;
+            max-width: 440px;
+            padding: 24px;
+            text-align: center;
+        }
+        h1 { font-size: 26px; margin-bottom: 12px; font-weight: 700; }
+        p { color: var(--text-muted); line-height: 1.5; margin-bottom: 32px; font-size: 15px; }
+        .status-badge {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--success);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div style="font-size: 54px; margin-bottom: 20px;">⚡</div>
+    <h1>Request Logged Successfully</h1>
+    <p>Your delivery coordinates have been pinned. Our team will manually call your phone number to authorize your subscription details shortly.<br><br>The online transaction terminal is currently under construction.</p>
+    <div class="status-badge">
+        Terminal State: Awaiting Manual Verification Call
+    </div>
+</div>
+</body>
+</html>
